@@ -241,7 +241,7 @@
         '<br>一人一钥：第一次用哪把，这把钥匙就绑给你的学号，别人再拿到也用不了。' +
         '<br>权限 2 小时有效；关掉标签页就没了，下次进来要重新输。',
       label: '管理员密钥',
-      type: 'password',
+      type: 'text',            // 不能用 password：手机上会切安全键盘，粘贴不了
       placeholder: 'B8-XXXX-XXXX-XXXX',
       confirmText: '启用',
       validate: function (v) {
