@@ -7,15 +7,15 @@
 <meta name="description" content="八班纪事与另外两个站点的更新记录。">
 <link rel="canonical" href="https://bhsf202808.homes/log.html">
 <meta name="theme-color" content="#f7f2e8">
-<link rel="icon" href="assets/favicon.png?v=20261101a2" type="image/png">
+<link rel="icon" href="assets/favicon.png?v=20261101b2" type="image/png">
 <script>
-window.B8_BUILD = '20261101a2';
+window.B8_BUILD = '20261101b2';
 window.B8_T = (function () {
   var m = (location.search || '').match(/[?&]t=([^&]+)/);
   return m ? '&t=' + encodeURIComponent(m[1]) : '';
 })();
 window.B8_TEST = !!window.B8_T;
-document.write('<link rel="stylesheet" href="assets/styles.css?v=20261101a2' + window.B8_T + '">');
+document.write('<link rel="stylesheet" href="assets/styles.css?v=20261101b2' + window.B8_T + '">');
 </script>
 <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -25,7 +25,7 @@ document.write('<link rel="stylesheet" href="assets/styles.css?v=20261101a2' + w
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="index.html" aria-label="回首页">
-      <img class="brand-mark" src="assets/icon.png?v=20261101a2" alt="" width="30" height="30">
+      <img class="brand-mark" src="assets/icon.png?v=20261101b2" alt="" width="30" height="30">
       <span class="brand-text">
         <span class="brand-name">八班纪事</span>
         <span class="brand-ver" id="brand-ver">v1.0</span>
@@ -61,6 +61,25 @@ document.write('<link rel="stylesheet" href="assets/styles.css?v=20261101a2' + w
 
       <ol class="timeline">
         <li class="is-done">
+          <span class="tl-time">v2.0</span>
+          <div class="tl-body">
+            <h3>账号体系上线：自己的学号，自己的密码</h3>
+            <p>
+              不再是「一个口令全班通用」。现在每个人用<strong>学号</strong>登录，第一次进来核对姓名后自己设密码，
+              以后凭密码进站。密码只存 sha256，谁也看不到明文。
+            </p>
+            <p>
+              <strong>管理员</strong>和<strong>超级管理员</strong>改成密钥制：先用自己的账号登录，再输入密钥提权。
+              一把密钥第一次被谁用，就永久绑给谁，转借无效；权限只有 2 小时，关掉标签页得重新输。
+            </p>
+            <p>
+              管理员能改任何文章、删留言、回复悄悄话。超级管理员多三项：看密钥状态并停用、
+              查看和重置每个人的密码、直接改留言内容。
+            </p>
+          </div>
+        </li>
+
+        <li>
           <span class="tl-time">v1.0</span>
           <div class="tl-body">
             <h3>三个站一起上线</h3>
@@ -72,17 +91,6 @@ document.write('<link rel="stylesheet" href="assets/styles.css?v=20261101a2' + w
               纪事：新鲜事、活动、留言板。游乐场：三个小游戏、合影墙、排行榜。树洞：悄悄话、提问箱、时光胶囊。
             </p>
             <p class="form-note">数据库、DNS、证书的搭建过程记在仓库根目录的 README 里。</p>
-          </div>
-        </li>
-
-        <li>
-          <span class="tl-time">待办</span>
-          <div class="tl-body">
-            <h3>接下来想做的</h3>
-            <p>
-              班级相册按活动归档、每月一次的班级月报、树洞里「一年前的今天」回顾。
-              想到什么直接在留言板写，或者找技术组说。
-            </p>
           </div>
         </li>
       </ol>
@@ -106,7 +114,7 @@ document.write('<link rel="stylesheet" href="assets/styles.css?v=20261101a2' + w
 <script>
 (function () {
   var T = window.B8_T || '';
-  var V = '?v=20261101a2' + T;
+  var V = '?v=20261101b2' + T;
   var list = [
     ['assets/site-config.js', 0],
     ['assets/main.js', 1],

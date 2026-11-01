@@ -1,21 +1,81 @@
 -- ============================================================
---  北京四中 2028 届 8 班 · 初始数据
---  由 scripts/gen-seed.mjs 生成于 2026/11/1 12:51:39
+--  北京四中 2028 届 8 班 · 初始数据  v2.0
+--  由 scripts/gen-seed.mjs 生成于 2026/11/1 13:30:13
 --  可重复执行：全部 on conflict do nothing
---
 --  先跑 schema.sql，再跑这个文件。
 -- ============================================================
 
--- 1. 口令（只存 sha256）
-insert into public.b8_keys (kind, label, hash) values
-  ('class', '八班通用口令', '188acf30a5c113d9f899cee14e6d88cbc6ca5e14760454cce395ace093cc7cf4'),
-  ('admin', '班长', '2c489a386fe594ff06b24facabf85456678f9775e1b33816609cdca26d21065c'),
-  ('admin', '副班长', 'f08042b66fca1f2a9b026a8437854cec329b139bd4f4135c6979a2097b7cc124'),
-  ('admin', '技术组', '15c459ee91a543ce30ccb404162862801bf5dc7d515bc9786d7ffc270073229d'),
-  ('admin', '备用', '4df57fb3b61f0c20f5a27403643b1788aded049969a22b189f1e2de5428a52e2')
+-- 1. 花名册（还没有密码，第一次登录时自己设）
+insert into public.b8_members (student_no, name) values
+  ('20282307', '郭孟涛'),
+  ('20282308', '孔易凡'),
+  ('20282309', '李雨辰'),
+  ('20282310', '李源松'),
+  ('20282311', '李梓滕'),
+  ('20282312', '刘墨涵'),
+  ('20282313', '卢观达'),
+  ('20282314', '梅凌寒'),
+  ('20282315', '门子喧'),
+  ('20282316', '苗镭泷'),
+  ('20282317', '孙天浩'),
+  ('20282318', '陶俊州'),
+  ('20282319', '万树烨'),
+  ('20282320', '王翰扬'),
+  ('20282321', '王嘉越'),
+  ('20282322', '王奕白'),
+  ('20282323', '王梓宸'),
+  ('20282324', '辛泽涵'),
+  ('20282325', '闫子涵'),
+  ('20282326', '杨秉臻'),
+  ('20282327', '杨昊元'),
+  ('20282328', '杨沛然'),
+  ('20282329', '尹云策'),
+  ('20282330', '于润泽'),
+  ('20282331', '张筠博'),
+  ('20282332', '赵英泽'),
+  ('20282333', '赵子涵'),
+  ('20282334', '周克润'),
+  ('20282335', '陈相颐'),
+  ('20282336', '陈梓瑶'),
+  ('20282337', '戴子淇'),
+  ('20282338', '狄佑恩'),
+  ('20282339', '甘悠然'),
+  ('20282340', '黄雅涵'),
+  ('20282341', '江天琪'),
+  ('20282342', '李梓菲'),
+  ('20282343', '瞿雨霏'),
+  ('20282344', '汪致远'),
+  ('20282345', '王梓羽'),
+  ('20282346', '谢潇仪'),
+  ('20282347', '徐梓炎'),
+  ('20282348', '严雅琪'),
+  ('20282349', '杨杰茹'),
+  ('20282350', '张一清')
+on conflict (student_no) do nothing;
+
+-- 2. 密钥（只存 sha256；kind = admin / super）
+insert into public.b8_admin_keys (kind, label, hash) values
+  ('super', '超级管理员 01', '6216117f6d4fd8b7a877ead76f6073f664a29684772de640155d25a73b9b8e2b'),
+  ('super', '超级管理员 02', '0f9b3cf4c92c52a782a3a9e1c7ad59b61ccac0e8a5011b0a377f624fad327002'),
+  ('super', '超级管理员 03', '9ffb30228e0a2df2663016a767c170d53b207d54ea045cca97e6bc39496b7d8c'),
+  ('admin', '管理员 01', 'b8cf0c747c3a1d5ca25eab1c2a777a3ef5a774b73294da56e9c1614358d0f10d'),
+  ('admin', '管理员 02', 'bf0a34866f1ba02c462ed2697801babdf1cb4fdc5fc1b89fae24d6f940f68e05'),
+  ('admin', '管理员 03', '66ff7ad8b79a257fa79a2d77a8e95a44674cad0f6b5d0d1a503daca8d9f827bc'),
+  ('admin', '管理员 04', '74ee04cfc779990af23d5acdb73398e5535aef890b44fcb392b279d50b739b9e'),
+  ('admin', '管理员 05', '01cebcd40c3873e2122f7e4edd680eb9cfd9c9d25e66daaa71085a991dc2cc29'),
+  ('admin', '管理员 06', '3099a3188b9120635b8310e1e4f10f23a8514e7349aa38b797654ce0041273d6'),
+  ('admin', '管理员 07', '4fdb3d837539f20903188e87b6e106eec3ef3c7d81a611423a2498a470ccb7ca'),
+  ('admin', '管理员 08', '38905404214df54a2846c1513d3274a9a14f3c11aaf8cfbfb7fd4896a7bd9dcf'),
+  ('admin', '管理员 09', '29f38b189ce72d112951416df88c09d0da5eaff82ea75d03c86ae45b1a39bdab'),
+  ('admin', '管理员 10', '71c5e460088882c0b8bab083d3a5b653b89f67444bf4750c2863bc9b804ecd8c'),
+  ('admin', '管理员 11', '05acdffd15b0e70edfdda52c93c55650b9a141c54c7477c0bbd45d389e3edb6c'),
+  ('admin', '管理员 12', '1e418f375e7f817277c0a5c1ee9e9aa4edce26f5278ac0cc4d5db6989e31431b'),
+  ('admin', '管理员 13', 'a2ba2e78b37b327df187d22ce6e56eff8f5bf44032131411ac66f13812e5ad48'),
+  ('admin', '管理员 14', '7ae38dd85fc732647798ecf5cbee039319a522eabe81c9b740e05c6637c32227'),
+  ('admin', '管理员 15', '576e853c6b9a0c03386f702218c41561f5c87d0e4910460c93d63b583e996c0a')
 on conflict (hash) do nothing;
 
--- 2. 初始文章（与 content/posts/*.md 一致）
+-- 3. 初始文章（与 content/posts/*.md 一致）
 insert into public.b8_posts
   (slug, cat, title, date, excerpt, byline, body, views, sort_order, published)
 values
@@ -92,6 +152,7 @@ values
 <p>高二的课比高一重。这句话听了太多遍，但真正坐进教室才发现，重的不只是课时表，还有从九月开始就要一直算着的日子。</p>', 0, 10, true)
 on conflict (slug) do nothing;
 
--- 3. 自检
--- select kind, label, active from public.b8_keys order by kind, id;
--- select slug, title, date from public.b8_posts order by date desc;
+-- 4. 自检
+-- select count(*) from public.b8_members;      -- 44
+-- select kind, count(*) from public.b8_admin_keys group by kind;  -- super 3 / admin 15
+-- select count(*) from public.b8_posts;        -- 8
