@@ -19,9 +19,9 @@ window.B8_CONFIG = {
   },
 
   links: {
-    homes: 'https://bhsf202808.homes/',
-    fun: 'https://bhsf202808.fun/',
-    site: 'https://bhsf202808.site/'
+    homes: '//bhsf202808.homes/',
+    fun: '//bhsf202808.fun/',
+    site: '//bhsf202808.site/'
   },
 
   // 板块开关：改完推上去就生效

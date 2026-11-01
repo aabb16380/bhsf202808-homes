@@ -285,8 +285,10 @@
     panel.setAttribute('aria-modal', 'true');
     panel.setAttribute('aria-label', '管理后台');
     panel.innerHTML =
-      // .modal-inner 默认 460px，后台要表格，这里用内联样式放宽到 920px
-      '<div class="modal-inner" id="adm-inner" tabindex="-1"' +
+      // .modal-inner 默认 460px，后台要表格，这里用内联样式放宽到 920px。
+      // 不加 tabindex / focus()：base.css 的 :focus-visible 会给整块面板描红边，
+      // 看着像报错；Esc 监听在 document 上，不依赖焦点。
+      '<div class="modal-inner" id="adm-inner"' +
         ' style="width:min(920px,100%);max-height:88vh">' +
         '<div style="display:flex;align-items:flex-start;justify-content:space-between;' +
           'gap:14px;flex-wrap:wrap">' +
@@ -335,7 +337,7 @@
     });
 
     var inner = $('adm-inner');
-    if (inner && inner.focus) inner.focus();
+    if (inner && inner.scrollTop) inner.scrollTop = 0;
 
     renderTabs();
     switchTab('posts');
