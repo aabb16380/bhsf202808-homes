@@ -10,7 +10,7 @@ window.B8_CONFIG = {
     name: '八班纪事',
     domain: 'bhsf202808.homes',
     github: 'aabb16380',
-    version: 'v2.8'
+    version: 'v2.9'
   },
 
   supabase: {
