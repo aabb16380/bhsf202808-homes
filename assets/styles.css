@@ -1805,3 +1805,65 @@ body[data-site="site"][data-mode="night"] .gate-seal {
     opacity: 0.055;
   }
 }
+/* ---------- 文章评论 ---------- */
+.comment-list { display: grid; gap: 0; }
+
+.comment {
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.comment:last-child { border-bottom: 1px solid var(--line); }
+
+.comment-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.comment-name {
+  font-family: var(--serif);
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+.comment-time {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+.comment-head .comment-del { margin-left: auto; }
+
+.comment-body {
+  margin-top: 7px;
+  font-size: 14.5px;
+  line-height: 1.85;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.comment-empty {
+  padding: 22px 0;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+.comment-count {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-left: 6px;
+}
+
+.comment-form {
+  margin-top: 26px;
+  padding: 20px 22px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+}
