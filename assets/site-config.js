@@ -1,10 +1,9 @@
 /* ============================================================
    八班纪事 · 唯一配置点
    ------------------------------------------------------------
-   1. 在 supabase.com 建一个项目（区域选 Singapore），
-      SQL Editor 里整段执行 supabase/schema.sql，再执行 supabase/seed.sql
-   2. Settings → API，把 Project URL 和 anon public key 填到下面
-   两个值留空时：文章走静态版、留言板自动隐藏，站点照常打开。
+   Supabase 项目：zcfdtfmxtsxacsklqlhe（Singapore · free）
+   三站共用这一个库，表名统一 b8_ 前缀。
+   用的是新版 publishable key（等价于旧的 anon key，只读权限+过 RLS）。
    ============================================================ */
 window.B8_CONFIG = {
   site: {
@@ -15,8 +14,8 @@ window.B8_CONFIG = {
   },
 
   supabase: {
-    url: '',        // 例：https://abcdefghijkl.supabase.co
-    anonKey: ''     // 例：eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....
+    url: 'https://zcfdtfmxtsxacsklqlhe.supabase.co',
+    anonKey: 'sb_publishable_kkJAT4lA9KFJGhua2V9gjw_tr-doaVN'
   },
 
   links: {
