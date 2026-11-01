@@ -7,15 +7,17 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f7f2e8">
 <script>
-  // 每次访问都换一个时间戳，强制绕过浏览器与 Pages CDN 的缓存
-  var to = new URLSearchParams(location.search).get('to') || '/';
+  // 每次访问都换一个时间戳，强制绕过浏览器与 Pages CDN 的缓存。
+  // 默认跳 "../"：这样不管是自定义域名（站点在根目录）还是
+  // aabb16380.github.io/bhsf202808-homes/ 这种子路径，都能回到本站首页。
+  var to = new URLSearchParams(location.search).get('to') || '../';
   location.replace(to + (to.indexOf('?') >= 0 ? '&' : '?') + 't=' + Date.now());
 </script>
 </head>
 <body style="font-family:system-ui;padding:40px;color:#4b463c">
-  <p>正在跳转到最新版本…如果没反应，点<a id="fallback" href="/">这里</a>。</p>
+  <p>正在跳转到最新版本…如果没反应，点<a id="fallback" href="../">这里</a>。</p>
   <script>
-    document.getElementById('fallback').href = '/?t=' + Date.now();
+    document.getElementById('fallback').href = '../?t=' + Date.now();
   </script>
 </body>
 </html>
