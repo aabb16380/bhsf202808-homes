@@ -124,6 +124,8 @@
   B8.on(elMore, 'click', function () {
     state.shown += PAGE;
     renderList();
+    // 展开后装进框里滑，别把页面拉得老长
+    if (elList) elList.classList.add('scroll-box');
   });
 
   /* ---------- 活动卡片 ---------- */
