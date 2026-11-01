@@ -24,11 +24,15 @@
     return a.date < b.date ? 1 : -1;
   }
 
-  function merge(dbRows) {
+  function merge(dbRows, dropped) {
     var map = {};
     var list = [];
 
+    var dead = {};
+    (dropped || []).forEach(function (d) { dead[d.slug] = true; });
+
     statics().forEach(function (p) {
+      if (dead[p.slug]) return;   // 后台删过的，别再合并回来
       map[p.slug] = p;
       list.push(p);
     });
@@ -109,19 +113,23 @@
     var fallback = function (err) {
       state.error = err || null;
       state.source = 'static';
-      state.data = merge([]);
+      state.data = merge([], []);
       pending = null;
       return state.data;
     };
 
     if (!B8.sb || !B8.sb.ready) return Promise.resolve(fallback(null));
 
-    pending = B8.sb
-      .select('b8_posts', 'select=slug,cat,title,date,excerpt,byline,body,views,sort_order,published&order=date.desc&limit=300')
-      .then(function (rows) {
+    pending = Promise.all([
+      B8.sb.select('b8_posts', 'select=slug,cat,title,date,excerpt,byline,body,views,sort_order,published&order=date.desc&limit=300'),
+      B8.sb.select('b8_post_dropped', 'select=slug').catch(function () { return []; })
+    ])
+      .then(function (all) {
+        var rows = all[0] || [];
+        var dead = all[1] || [];
         state.source = 'db';
         state.error = null;
-        state.data = merge(rows || []);
+        state.data = merge(rows, dead);
         writeCache(state.data);
         pending = null;
         return state.data;
