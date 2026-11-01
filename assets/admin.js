@@ -82,6 +82,7 @@
           return;
         }
         B8.toast('已进入管理员模式');
+        if (elOpen) elOpen.textContent = '管理 · ' + (B8.auth.nick() || '已登录');
         showPanel();
       }).catch(function (err) {
         status.textContent = err && err.message ? err.message : '登录失败';
