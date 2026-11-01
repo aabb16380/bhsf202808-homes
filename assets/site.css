@@ -510,3 +510,27 @@
   .post-nav { flex-direction: column; }
   .post-nav a { max-width: 100%; }
 }
+
+/* ---------- 班徽：首屏右侧的大水印 ---------- */
+.hero-watermark {
+  position: absolute;
+  right: -5%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(430px, 40vw);
+  opacity: 0.07;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+@media (max-width: 860px) {
+  .hero-watermark {
+    width: 78vw;
+    right: -34%;
+    top: auto;
+    bottom: -8%;
+    transform: none;
+    opacity: 0.055;
+  }
+}
