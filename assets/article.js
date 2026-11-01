@@ -23,7 +23,10 @@
   var slug = (function () {
     var m = (location.search || '').match(/[?&]slug=([^&]+)/);
     return m ? decodeURIComponent(m[1]) : '';
-  })();
+    if (B8.auth && typeof B8.auth.ready === 'function') {
+    document.addEventListener('b8:auth', function () { location.reload(); });
+  }
+})();
 
   function catName(key) {
     var cats = B8.content.cats();
@@ -41,6 +44,142 @@
     }
   }
 
+  /* ---------- 管理员：在这一页直接改 / 删 ---------- */
+
+  var CATS = { news: '新鲜事', activity: '活动', notice: '通知', essay: '随笔' };
+
+  function adminBar(post) {
+    var bar = document.createElement('div');
+    bar.className = 'article-admin';
+    bar.id = 'article-admin';
+
+    var edit = document.createElement('button');
+    edit.type = 'button';
+    edit.className = 'btn sm';
+    edit.textContent = '编辑这篇';
+
+    var del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'btn ghost sm';
+    del.textContent = '删除';
+
+    var hint = document.createElement('span');
+    hint.className = 'article-admin-hint';
+    hint.id = 'article-admin-status';
+
+    bar.appendChild(edit);
+    bar.appendChild(del);
+    bar.appendChild(hint);
+
+    B8.on(edit, 'click', function () { openEditor(post); });
+    B8.on(del, 'click', removePost);
+
+    return bar;
+  }
+
+  function removePost() {
+    if (!window.confirm('删掉《' + (document.title.split(' · ')[0] || '这篇') + '》？删了就不能恢复。')) return;
+    var st = document.getElementById('article-admin-status');
+    if (st) st.textContent = '正在删除…';
+    B8.sb.rpc('b8_post_delete', { p_token: B8.auth.token(), p_slug: slug })
+      .then(function () {
+        B8.toast('已删除');
+        location.href = 'index.html';
+      })
+      .catch(function (err) {
+        if (st) st.textContent = (err && err.message ? err.message : '删除失败');
+      });
+  }
+
+  function openEditor(post) {
+    var old = document.getElementById('art-editor');
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+
+    var wrap = document.createElement('div');
+    wrap.id = 'art-editor';
+    wrap.className = 'modal';
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
+
+    var catOpts = '';
+    Object.keys(CATS).forEach(function (k) {
+      catOpts += '<option value="' + k + '"' +
+        ((post.cat === k) ? ' selected' : '') + '>' + CATS[k] + '</option>';
+    });
+
+    wrap.innerHTML =
+      '<div class="modal-inner art-editor-inner">' +
+        '<h3 class="modal-title">编辑文章</h3>' +
+        '<div class="field"><label for="ae-title">标题</label>' +
+          '<input class="input" id="ae-title" maxlength="60"></div>' +
+        '<div class="art-editor-row">' +
+          '<div class="field"><label for="ae-cat">分类</label>' +
+            '<select class="input" id="ae-cat">' + catOpts + '</select></div>' +
+          '<div class="field"><label for="ae-date">日期</label>' +
+            '<input class="input" id="ae-date" type="date"></div>' +
+        '</div>' +
+        '<div class="field"><label for="ae-body">正文（支持 HTML）</label>' +
+          '<textarea class="textarea" id="ae-body" rows="14"></textarea></div>' +
+        '<div class="modal-actions">' +
+          '<button class="btn ghost sm" type="button" id="ae-cancel">取消</button>' +
+          '<button class="btn sm" type="button" id="ae-save">保存</button>' +
+        '</div>' +
+        '<p class="form-status" id="ae-status"></p>' +
+      '</div>';
+
+    document.body.appendChild(wrap);
+
+    var tEl = document.getElementById('ae-title');
+    var cEl = document.getElementById('ae-cat');
+    var dEl = document.getElementById('ae-date');
+    var bEl = document.getElementById('ae-body');
+    var st = document.getElementById('ae-status');
+    var saveBtn = document.getElementById('ae-save');
+
+    tEl.value = post.title || '';
+    dEl.value = String(post.date || '').slice(0, 10);
+    bEl.value = post.body || '';
+
+    function close() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); }
+    B8.on(document.getElementById('ae-cancel'), 'click', close);
+    B8.on(wrap, 'click', function (e) { if (e.target === wrap) close(); });
+
+    B8.on(saveBtn, 'click', function () {
+      var title = (tEl.value || '').trim();
+      var body = bEl.value || '';
+      if (!title) { st.className = 'form-status err'; st.textContent = '标题不能空'; return; }
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = '保存中…';
+      st.className = 'form-status';
+      st.textContent = '';
+
+      B8.sb.rpc('b8_post_save', {
+        p_token: B8.auth.token(),
+        p_post: {
+          slug: post.slug,
+          title: title,
+          cat: cEl.value,
+          date: dEl.value || null,
+          excerpt: post.excerpt || '',
+          byline: post.byline || '',
+          body: body,
+          published: true
+        }
+      }).then(function () {
+        st.className = 'form-status ok';
+        st.textContent = '保存了，正在刷新…';
+        location.reload();
+      }).catch(function (err) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = '保存';
+        st.className = 'form-status err';
+        st.textContent = (err && err.message) ? err.message : '保存失败';
+      });
+    });
+
+    setTimeout(function () { tEl.focus(); }, 80);
+  }
   function render(post, list) {
     document.title = post.title + ' · 八班纪事';
 
@@ -59,6 +198,14 @@
     }
 
     if (elBody) elBody.innerHTML = B8.content.sanitize(post.body || '<p>（这一篇还没有正文。）</p>');
+
+    // 管理员在这一页就能改 / 删，不用回列表找按钮
+    if (B8.auth && B8.auth.isAdmin && B8.auth.isAdmin() && elRoot) {
+      var host = elRoot.querySelector('.article-foot') || elRoot;
+      if (!document.getElementById('article-admin')) {
+        host.parentNode ? host.parentNode.insertBefore(adminBar(post), host) : host.appendChild(adminBar(post));
+      }
+    }
 
     // 阅读数
     B8.content.bumpView(post).then(function (n) {
@@ -110,5 +257,8 @@
     document.addEventListener('DOMContentLoaded', boot);
   } else {
     boot();
+  }
+  if (B8.auth && typeof B8.auth.ready === 'function') {
+    document.addEventListener('b8:auth', function () { location.reload(); });
   }
 })();

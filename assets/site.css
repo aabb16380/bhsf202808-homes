@@ -659,3 +659,42 @@
   background: rgba(120, 140, 230, 0.16);
 }
 .portal-space:hover { border-color: rgba(160, 180, 255, 0.7); }
+/* ---------- 文章页上的管理员工具条 ---------- */
+.article-admin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 26px auto 0;
+  max-width: 44rem;
+  padding: 12px 14px;
+  background: var(--seal-soft);
+  border: 1px dashed color-mix(in srgb, var(--seal) 40%, transparent);
+  border-radius: var(--radius);
+}
+
+.article-admin-hint {
+  font-size: 12.5px;
+  color: var(--seal);
+}
+
+.art-editor-inner { width: min(720px, 100%); text-align: left; }
+
+.art-editor-inner .field { margin-bottom: 12px; }
+.art-editor-inner .field label { display: block; margin-bottom: 5px; }
+
+.art-editor-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 560px) {
+  .art-editor-row { grid-template-columns: 1fr; }
+}
+
+.art-editor-inner .textarea {
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+}
