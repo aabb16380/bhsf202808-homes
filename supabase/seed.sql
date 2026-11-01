@@ -15,7 +15,7 @@ insert into public.b8_members (student_no, name) values
   ('20282312', '刘墨涵'),
   ('20282313', '卢观达'),
   ('20282314', '梅凌寒'),
-  ('20282315', '门子喧'),
+  ('20282315', '门子暄'),
   ('20282316', '苗镭泷'),
   ('20282317', '孙天浩'),
   ('20282318', '陶俊州'),
@@ -156,3 +156,6 @@ on conflict (slug) do nothing;
 -- select count(*) from public.b8_members;      -- 44
 -- select kind, count(*) from public.b8_admin_keys group by kind;  -- super 3 / admin 15
 -- select count(*) from public.b8_posts;        -- 8
+
+-- 更正：门子喧 → 门子暄（手抄花名册时的错字，v2.39）
+update public.b8_members set name = '门子暄' where student_no = '20282315';
