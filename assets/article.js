@@ -23,9 +23,6 @@
   var slug = (function () {
     var m = (location.search || '').match(/[?&]slug=([^&]+)/);
     return m ? decodeURIComponent(m[1]) : '';
-    if (B8.auth && typeof B8.auth.ready === 'function') {
-    document.addEventListener('b8:auth', function () { location.reload(); });
-  }
 })();
 
   function catName(key) {
@@ -180,7 +177,10 @@
 
     setTimeout(function () { tEl.focus(); }, 80);
   }
+  var lastPost = null;
+
   function render(post, list) {
+    lastPost = post;
     document.title = post.title + ' · 八班纪事';
 
     var canon = document.querySelector('link[rel="canonical"]');
@@ -258,7 +258,13 @@
   } else {
     boot();
   }
-  if (B8.auth && typeof B8.auth.ready === 'function') {
-    document.addEventListener('b8:auth', function () { location.reload(); });
-  }
+  // 提权（输密钥）之后不刷新页面，直接把管理员工具条补上
+  document.addEventListener('b8:auth', function () {
+    if (!B8.auth || !B8.auth.isAdmin || !B8.auth.isAdmin()) return;
+    if (!lastPost || !elRoot || document.getElementById('article-admin')) return;
+    var host2 = elRoot.querySelector('.article-foot');
+    var bar = adminBar(lastPost);
+    if (host2 && host2.parentNode) host2.parentNode.insertBefore(bar, host2);
+    else elRoot.parentNode.insertBefore(bar, elRoot.nextSibling);
+  });
 })();
