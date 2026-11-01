@@ -136,12 +136,9 @@
       return;
     }
 
-    if (!B8.auth.isAdmin()) {
-      askKey();                     // 登录了但没提权：弹密钥小窗
-      return;
-    }
-
-    openPanel();                    // 已经提权：直接进后台
+    // 不管是不是管理员都进面板：不是管理员就在面板里给一个密钥输入框，
+    // 至少让人看得见文章列表和「新建文章」在哪，而不是弹个 toast 就没了。
+    openPanel();
   }
 
   /* ---------- 通用小弹窗（只问一个值） ---------- */
@@ -275,7 +272,70 @@
     state.draft = '';
   }
 
+  /* 不是管理员时先看到这个：说明状态 + 一个密钥输入框 */
+  function openLockedPanel() {
+    closeDialog();
+    closePanel();
+
+    panel = document.createElement('div');
+    panel.className = 'modal';
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-modal', 'true');
+    panel.innerHTML =
+      '<div class="modal-inner" style="width:min(520px,100%)">' +
+        '<h3 class="modal-title">管理后台</h3>' +
+        '<p class="modal-note">' +
+          (B8.auth.isLogged()
+            ? '你已经登录（' + B8.esc(nick()) + '），但这个账号还不是管理员。'
+            : '还没登录。先用学号登录，再输一次管理员密钥。') +
+        '</p>' +
+        (B8.auth.isLogged()
+          ? '<div class="field" style="margin-top:16px">' +
+              '<label for="adm-key-inline">管理员密钥</label>' +
+              '<input class="input" id="adm-key-inline" type="text" ' +
+                'placeholder="B8-XXXX-XXXX-XXXX" autocomplete="off" ' +
+                'autocapitalize="characters" spellcheck="false">' +
+              '<p class="modal-note" style="margin-top:6px">' +
+                '一人一钥，第一次用哪把就永久绑给你，以后不用再输。</p>' +
+            '</div>' +
+            '<div class="modal-actions">' +
+              '<button class="btn ghost sm" type="button" id="adm-lock-close">关闭</button>' +
+              '<button class="btn sm" type="button" id="adm-lock-go">启用密钥</button>' +
+            '</div>' +
+            '<p class="form-status" id="adm-lock-status"></p>'
+          : '<div class="modal-actions"><button class="btn sm" type="button" id="adm-lock-close">知道了</button></div>') +
+      '</div>';
+    document.body.appendChild(panel);
+
+    B8.on($('adm-lock-close'), 'click', closePanel);
+
+    var keyIn = $('adm-key-inline');
+    var go = $('adm-lock-go');
+    var st = $('adm-lock-status');
+    if (!keyIn || !go) return;
+
+    function submitKey() {
+      var v = B8.trim ? B8.trim(keyIn.value, 40) : String(keyIn.value || '').trim();
+      if (v.length < 6) { if (st) { st.className = 'form-status err'; st.textContent = '密钥太短'; } return; }
+      go.disabled = true;
+      go.textContent = '验证中…';
+      B8.auth.useKey(v).then(function () {
+        B8.toast('管理员权限已启用');
+        openPanel();
+      }).catch(function (err) {
+        go.disabled = false;
+        go.textContent = '启用密钥';
+        if (st) { st.className = 'form-status err'; st.textContent = errText(err); }
+      });
+    }
+
+    B8.on(go, 'click', submitKey);
+    B8.on(keyIn, 'keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submitKey(); } });
+    setTimeout(function () { keyIn.focus(); }, 80);
+  }
+
   function openPanel() {
+    if (!B8.auth.isAdmin()) { openLockedPanel(); return; }
     closeDialog();
     closePanel();
 
