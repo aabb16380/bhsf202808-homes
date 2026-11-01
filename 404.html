@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>页面不见了 · 八班纪事</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f7f2e8">
+<link rel="icon" href="/assets/favicon.png?v=20261101a1" type="image/png">
+<script>
+window.B8_BUILD = '20261101a1';
+window.B8_T = (function () {
+  var m = (location.search || '').match(/[?&]t=([^&]+)/);
+  return m ? '&t=' + encodeURIComponent(m[1]) : '';
+})();
+window.B8_TEST = !!window.B8_T;
+document.write('<link rel="stylesheet" href="/assets/styles.css?v=20261101a1' + window.B8_T + '">');
+</script>
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .nf {
+    min-height: 72vh;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 60px 0;
+  }
+  .nf-code {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--seal);
+  }
+  .nf h1 { margin: 18px 0 14px; font-size: clamp(1.8rem, 5vw, 2.6rem); }
+  .nf p { color: var(--ink-2); max-width: 26rem; margin-inline: auto; }
+  .nf-actions { display: flex; gap: 12px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+</style>
+</head>
+<body data-site="homes">
+<main class="wrap nf">
+  <div>
+    <p class="nf-code">404</p>
+    <h1>这一页不在册</h1>
+    <p>地址可能抄错了，也可能这一页已经被收起来。回首页看看，或者去留言板说一声。</p>
+    <div class="nf-actions">
+      <a class="btn" href="/">回首页</a>
+      <a class="btn ghost" href="/#board">去留言板</a>
+    </div>
+  </div>
+</main>
+<script>
+(function () {
+  var T = window.B8_T || '';
+  var V = '?v=20261101a1' + T;
+  document.write('<script src="/assets/site-config.js' + V + '"><\/script>');
+  document.write('<script src="/assets/main.js' + V + '" defer><\/script>');
+})();
+</script>
+</body>
+</html>
