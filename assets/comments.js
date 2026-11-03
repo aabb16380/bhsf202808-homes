@@ -154,14 +154,18 @@
     var btn = e.target && e.target.closest ? e.target.closest('.comment-del') : null;
     if (!btn) return;
     var id = btn.getAttribute('data-del');
-    if (!window.confirm('删掉这条评论？')) return;
-    btn.disabled = true;
-    B8.sb.rpc('b8_comment_del', { p_token: B8.auth.token(), p_id: Number(id) })
-      .then(function () { B8.toast('已删除'); load(); })
-      .catch(function (err) {
-        btn.disabled = false;
-        B8.toast('删不掉：' + (err && err.message ? err.message : '网络异常'));
-      });
+    B8.confirm('删掉这条评论？', {
+      title: '删除评论', okText: '删除', danger: true
+    }).then(function (ok) {
+      if (!ok) return;
+      btn.disabled = true;
+      B8.sb.rpc('b8_comment_del', { p_token: B8.auth.token(), p_id: Number(id) })
+        .then(function () { B8.toast('已删除'); load(); })
+        .catch(function (err) {
+          btn.disabled = false;
+          B8.toast('删不掉：' + (err && err.message ? err.message : '网络异常'));
+        });
+    });
   }
 
   function boot() {

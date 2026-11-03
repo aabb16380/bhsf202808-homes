@@ -565,22 +565,25 @@
       B8.on(btn, 'click', function () {
         var post = state.posts[Number(btn.getAttribute('data-del'))];
         if (!post) return;
-        if (!window.confirm('删除《' + post.title + '》？\n' +
-          '数据库里删掉就没了；同 slug 的静态 md 还在的话，列表会回落到那一版。')) return;
-
-        btn.disabled = true;
-        B8.sb.rpc('b8_post_delete', { p_token: B8.auth.token(), p_slug: post.slug })
-          .then(function () {
-            B8.toast('已删除');
-            return afterWrite();
-          })
-          .then(function (fresh) {
-            if (fresh) renderPostList(fresh);
-          })
-          .catch(function (err) {
-            btn.disabled = false;
-            B8.toast('删除失败：' + errText(err));
-          });
+        B8.confirm('删除《' + post.title + '》？\n' +
+          '数据库里删掉就没了；同 slug 的静态 md 还在的话，列表会回落到那一版。', {
+          title: '删除文章', okText: '删除', danger: true
+        }).then(function (ok) {
+          if (!ok) return;
+          btn.disabled = true;
+          B8.sb.rpc('b8_post_delete', { p_token: B8.auth.token(), p_slug: post.slug })
+            .then(function () {
+              B8.toast('已删除');
+              return afterWrite();
+            })
+            .then(function (fresh) {
+              if (fresh) renderPostList(fresh);
+            })
+            .catch(function (err) {
+              btn.disabled = false;
+              B8.toast('删除失败：' + errText(err));
+            });
+        });
       });
     });
   }
@@ -875,33 +878,41 @@
 
       B8.on(B8.qs('[data-gb-hide]', item), 'click', function () {
         var btn = B8.qs('[data-gb-hide]', item);
-        if (!window.confirm('隐藏这条留言？\n隐藏后公开的留言板里就看不到了；' +
-          '前端没有恢复入口，只能去数据库改 hidden。')) return;
-        if (btn) btn.disabled = true;
-        B8.sb.rpc('b8_guest_hide', {
-          p_token: B8.auth.token(), p_id: id, p_hidden: true
-        }).then(function () {
-          B8.toast('已隐藏');
-          return refreshGuest(true);
-        }).catch(function (err) {
-          if (btn) btn.disabled = false;
-          B8.toast('隐藏失败：' + errText(err));
+        B8.confirm('隐藏这条留言？\n隐藏后公开的留言板里就看不到了；' +
+          '前端没有恢复入口，只能去数据库改 hidden。', {
+          title: '隐藏留言', okText: '隐藏', danger: true
+        }).then(function (ok) {
+          if (!ok) return;
+          if (btn) btn.disabled = true;
+          B8.sb.rpc('b8_guest_hide', {
+            p_token: B8.auth.token(), p_id: id, p_hidden: true
+          }).then(function () {
+            B8.toast('已隐藏');
+            return refreshGuest(true);
+          }).catch(function (err) {
+            if (btn) btn.disabled = false;
+            B8.toast('隐藏失败：' + errText(err));
+          });
         });
       });
 
       B8.on(B8.qs('[data-gb-del]', item), 'click', function () {
         var btn = B8.qs('[data-gb-del]', item);
-        if (!window.confirm('删除这条留言？删了就找不回来了。')) return;
-        if (btn) btn.disabled = true;
-        B8.sb.rpc('b8_guest_del', { p_token: B8.auth.token(), p_id: id })
-          .then(function () {
-            B8.toast('已删除');
-            return refreshGuest(true);
-          })
-          .catch(function (err) {
-            if (btn) btn.disabled = false;
-            B8.toast('删除失败：' + errText(err));
-          });
+        B8.confirm('删除这条留言？删了就找不回来了。', {
+          title: '删除留言', okText: '删除', danger: true
+        }).then(function (ok) {
+          if (!ok) return;
+          if (btn) btn.disabled = true;
+          B8.sb.rpc('b8_guest_del', { p_token: B8.auth.token(), p_id: id })
+            .then(function () {
+              B8.toast('已删除');
+              return refreshGuest(true);
+            })
+            .catch(function (err) {
+              if (btn) btn.disabled = false;
+              B8.toast('删除失败：' + errText(err));
+            });
+        });
       });
     });
   }
@@ -1024,22 +1035,30 @@
         if (!k) return;
         var next = !k.active;              // 现在启用 → 点下去是停用
 
-        if (!next && !window.confirm('停用「' + (k.label || ('#' + k.id)) + '」？\n' +
-          '停用后这个人的管理员权限立刻失效，正在用的后台会话也会被踢掉。\n' +
-          '（如果停用的是你自己手里这把，你会立刻掉线。）')) return;
+        function doToggle() {
+          btn.disabled = true;
+          B8.sb.rpc('b8_super_key_toggle', {
+            p_token: B8.auth.token(),
+            p_id: Number(k.id),
+            p_active: next
+          }).then(function () {
+            B8.toast(next ? '已启用' : '已停用');
+            return refreshKeys(true);
+          }).catch(function (err) {
+            btn.disabled = false;
+            B8.toast('操作失败：' + errText(err));
+          });
+        }
 
-        btn.disabled = true;
-        B8.sb.rpc('b8_super_key_toggle', {
-          p_token: B8.auth.token(),
-          p_id: Number(k.id),
-          p_active: next
-        }).then(function () {
-          B8.toast(next ? '已启用' : '已停用');
-          return refreshKeys(true);
-        }).catch(function (err) {
-          btn.disabled = false;
-          B8.toast('操作失败：' + errText(err));
-        });
+        if (!next) {
+          B8.confirm('停用「' + (k.label || ('#' + k.id)) + '」？\n' +
+            '停用后这个人的管理员权限立刻失效，正在用的后台会话也会被踢掉。\n' +
+            '（如果停用的是你自己手里这把，你会立刻掉线。）', {
+            title: '停用密钥', okText: '停用', danger: true
+          }).then(function (ok) { if (ok) doToggle(); });
+        } else {
+          doToggle();
+        }
       });
     });
 
@@ -1047,18 +1066,21 @@
       B8.on(btn, 'click', function () {
         var k = state.keys[Number(btn.getAttribute('data-key-unbind'))];
         if (!k || !k.bound_no) return;
-        if (!window.confirm('解绑「' + (k.label || ('#' + k.id)) + '」？\n' +
-          '解绑后这把钥匙可以绑给别人，现在用它提权的会话立刻失效。')) return;
-
-        btn.disabled = true;
-        B8.sb.rpc('b8_super_key_unbind', {
-          p_token: B8.auth.token(), p_id: Number(k.id)
-        }).then(function () {
-          B8.toast('已解绑');
-          return refreshKeys(true);
-        }).catch(function (err) {
-          btn.disabled = false;
-          B8.toast('解绑失败：' + errText(err));
+        B8.confirm('解绑「' + (k.label || ('#' + k.id)) + '」？\n' +
+          '解绑后这把钥匙可以绑给别人，现在用它提权的会话立刻失效。', {
+          title: '解绑密钥', okText: '解绑', danger: true
+        }).then(function (ok) {
+          if (!ok) return;
+          btn.disabled = true;
+          B8.sb.rpc('b8_super_key_unbind', {
+            p_token: B8.auth.token(), p_id: Number(k.id)
+          }).then(function () {
+            B8.toast('已解绑');
+            return refreshKeys(true);
+          }).catch(function (err) {
+            btn.disabled = false;
+            B8.toast('解绑失败：' + errText(err));
+          });
         });
       });
     });
@@ -1185,21 +1207,29 @@
         if (!m) return;
         var next = !m.active;
 
-        if (!next && !window.confirm('停用 ' + (m.name || m.student_no) + ' 的账号？\n' +
-          '停用后这个账号立刻不能登录，正在用的会话也会失效。')) return;
+        function doToggle() {
+          btn.disabled = true;
+          B8.sb.rpc('b8_super_member_toggle', {
+            p_token: B8.auth.token(),
+            p_no: m.student_no,
+            p_active: next
+          }).then(function () {
+            B8.toast(next ? '账号已启用' : '账号已停用');
+            return refreshMembers(true);
+          }).catch(function (err) {
+            btn.disabled = false;
+            B8.toast('操作失败：' + errText(err));
+          });
+        }
 
-        btn.disabled = true;
-        B8.sb.rpc('b8_super_member_toggle', {
-          p_token: B8.auth.token(),
-          p_no: m.student_no,
-          p_active: next
-        }).then(function () {
-          B8.toast(next ? '账号已启用' : '账号已停用');
-          return refreshMembers(true);
-        }).catch(function (err) {
-          btn.disabled = false;
-          B8.toast('操作失败：' + errText(err));
-        });
+        if (!next) {
+          B8.confirm('停用 ' + (m.name || m.student_no) + ' 的账号？\n' +
+            '停用后这个账号立刻不能登录，正在用的会话也会失效。', {
+            title: '停用账号', okText: '停用', danger: true
+          }).then(function (ok) { if (ok) doToggle(); });
+        } else {
+          doToggle();
+        }
       });
     });
   }

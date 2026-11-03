@@ -154,20 +154,24 @@
     var btn = e.target.closest ? e.target.closest('.gb-del') : null;
     if (!btn) return;
     var id = btn.getAttribute('data-id');
-    if (!window.confirm('删除这条留言？删了就找不回来了。')) return;
-    btn.disabled = true;
-    B8.sb
-      .rpc('b8_guest_del', { p_token: B8.auth.token(), p_id: Number(id) })
-      .then(function () {
-        var node = B8.qs('.gb-item[data-id="' + id + '"]');
-        if (node && node.parentNode) node.parentNode.removeChild(node);
-        state.count = Math.max(0, state.count - 1);
-        B8.toast('已删除');
-      })
-      .catch(function (err) {
-        btn.disabled = false;
-        B8.toast('删除失败：' + (err && err.message ? err.message : '网络异常'));
-      });
+    B8.confirm('删除这条留言？删了就找不回来了。', {
+      title: '删除留言', okText: '删除', danger: true
+    }).then(function (ok) {
+      if (!ok) return;
+      btn.disabled = true;
+      B8.sb
+        .rpc('b8_guest_del', { p_token: B8.auth.token(), p_id: Number(id) })
+        .then(function () {
+          var node = B8.qs('.gb-item[data-id="' + id + '"]');
+          if (node && node.parentNode) node.parentNode.removeChild(node);
+          state.count = Math.max(0, state.count - 1);
+          B8.toast('已删除');
+        })
+        .catch(function (err) {
+          btn.disabled = false;
+          B8.toast('删除失败：' + (err && err.message ? err.message : '网络异常'));
+        });
+    });
   }
 
   /* ---------- 启动 ---------- */

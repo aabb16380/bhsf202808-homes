@@ -75,17 +75,21 @@
   }
 
   function removePost() {
-    if (!window.confirm('删掉《' + (document.title.split(' · ')[0] || '这篇') + '》？删了就不能恢复。')) return;
-    var st = document.getElementById('article-admin-status');
-    if (st) st.textContent = '正在删除…';
-    B8.sb.rpc('b8_post_delete', { p_token: B8.auth.token(), p_slug: slug })
-      .then(function () {
-        B8.toast('已删除');
-        location.href = 'index.html';
-      })
-      .catch(function (err) {
-        if (st) st.textContent = (err && err.message ? err.message : '删除失败');
-      });
+    B8.confirm('删掉《' + (document.title.split(' · ')[0] || '这篇') + '》？删了就不能恢复。', {
+      title: '删除文章', okText: '删除', danger: true
+    }).then(function (ok) {
+      if (!ok) return;
+      var st = document.getElementById('article-admin-status');
+      if (st) st.textContent = '正在删除…';
+      B8.sb.rpc('b8_post_delete', { p_token: B8.auth.token(), p_slug: slug })
+        .then(function () {
+          B8.toast('已删除');
+          location.href = 'index.html';
+        })
+        .catch(function (err) {
+          if (st) st.textContent = (err && err.message ? err.message : '删除失败');
+        });
+    });
   }
 
   function openEditor(post) {
