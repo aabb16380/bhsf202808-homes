@@ -1222,6 +1222,34 @@ body[data-site="site"][data-mode="night"] .gate-seal {
 .console-row.is-off { opacity: 0.55; }
 .console-main { min-width: 0; }
 
+/* 最近删除：左边一张小图，右边是照片和删除者信息 */
+.console-row.is-del {
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: start;
+}
+
+.console-thumb {
+  display: block;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+.console-thumb.is-empty {
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-3);
+}
+
+.console-row.is-del .console-title { font-family: var(--serif); }
+.console-row.is-del .console-meta b { color: var(--ink); }
+.console-row.is-del .console-meta a { color: var(--seal); }
+
 .console-title {
   display: flex;
   align-items: center;
