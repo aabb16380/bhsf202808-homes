@@ -159,3 +159,8 @@ on conflict (slug) do nothing;
 
 -- 更正：门子喧 → 门子暄（手抄花名册时的错字，v2.39）
 update public.b8_members set name = '门子暄' where student_no = '20282315';
+-- 5. 投票用的性别：20282307–20282334 男生，20282335 起女生
+update public.b8_members set gender = 'm'
+ where student_no between '20282307' and '20282334' and gender = '';
+update public.b8_members set gender = 'f'
+ where student_no between '20282335' and '20282350' and gender = '';
